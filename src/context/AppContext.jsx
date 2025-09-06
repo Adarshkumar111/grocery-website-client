@@ -7,7 +7,7 @@ export const AppContext=createContext()
 
 export const AppContextProvider=({children})=>{
 
-    const currency=import.meta.VITE_CURRENCY
+    const currency=import.meta.env.VITE_CURRENCY
 
     const navigate=useNavigate();
     const [user,setUser]=useState(null)
@@ -40,9 +40,9 @@ export const AppContextProvider=({children})=>{
 
     // update cart item quantity
 
-    const updatecartItem=(itemId, quantity)=>{
+    const updateCartItem=(itemId, quantity)=>{
         let cartData=structuredClone(cartItems)
-        setData[itemId]=quantity;
+    cartData[itemId]=quantity;
         setCartItems(cartData)
         toast.success("Cart Updated")
     }
@@ -93,7 +93,7 @@ const getCartAmount = () => {
     },[])
 
 
-    const value ={navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products, currency, addToCart, updatecartItem, removeFromCart, cartItems, searchQuery, setSearchQuery, getCartAmount, getCartCount}
+    const value ={navigate, user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, products, currency, addToCart, updateCartItem, removeFromCart, cartItems, searchQuery, setSearchQuery, getCartAmount, getCartCount}
 
     return <AppContext.Provider value={value}>
         {children}
