@@ -37,14 +37,15 @@ const Cart = () => {
     }
   }, [products, cartItems]);
 
-  return products.length > 0 && cartItems ? (
-    <div className="flex flex-col md:flex-row mt-16">
-      <div className="flex-1 max-w-4xl">
-        <h1 className="text-3xl font-medium mb-6">
+  if (!(products.length > 0 && cartItems)) return null;
+
+  return (
+    <div className="flex flex-col lg:flex-row mt-16 px-4 md:px-8 gap-8 max-w-7xl mx-auto">
+      {/* Cart Items */}
+      <div className="flex-1">
+        <h1 className="text-2xl sm:text-3xl font-medium mb-6">
           Shopping Cart{" "}
-          <span className="text-sm text-indigo-500">
-            {getCartCount()} Items
-          </span>
+          <span className="text-sm text-indigo-500">{getCartCount()} Items</span>
         </h1>
 
         <div className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 text-base font-medium pb-3">
@@ -56,9 +57,9 @@ const Cart = () => {
         {cartArray.map((product, index) => (
           <div
             key={index}
-            className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3"
+            className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm sm:text-base font-medium pt-3 gap-2"
           >
-            <div className="flex items-center md:gap-6 gap-3">
+            <div className="flex items-center sm:gap-6 gap-3">
               <div
                 onClick={() => {
                   navigate(
@@ -66,7 +67,7 @@ const Cart = () => {
                   );
                   scrollTo(0, 0);
                 }}
-                className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden"
+                className="cursor-pointer w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center border border-gray-300 rounded overflow-hidden"
               >
                 <img
                   className="max-w-full h-full object-cover"
@@ -74,20 +75,20 @@ const Cart = () => {
                   alt={product.name}
                 />
               </div>
-              <div>
-                <p className="hidden md:block font-semibold">{product.name}</p>
-                <div className="font-normal text-gray-500/70">
+              <div className="flex-1">
+                <p className="hidden sm:block font-semibold">{product.name}</p>
+                <div className="font-normal text-gray-500/70 text-xs sm:text-sm">
                   <p>
                     Weight: <span>{product.weight || "N/A"}</span>
                   </p>
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-1">
                     <p>Qty:</p>
                     <select
                       onChange={(e) =>
                         updateCartItem(product._id, Number(e.target.value))
                       }
                       value={cartItems[product._id]}
-                      className="outline-none"
+                      className="outline-none border border-gray-300 rounded px-1"
                     >
                       {Array(
                         cartItems[product._id] > 9 ? cartItems[product._id] : 9
@@ -103,15 +104,12 @@ const Cart = () => {
                 </div>
               </div>
             </div>
-            <p className="text-center">
-              {currency}
-              {product.offerPrice * product.quantity}
-            </p>
+            <p className="text-center">{currency}{product.offerPrice * product.quantity}</p>
             <button
               onClick={() => removeFromCart(product._id)}
               className="cursor-pointer mx-auto"
             >
-              <img src={assets.remove_icon} alt="refresh" />
+              <img src={assets.remove_icon} alt="remove" className="w-5 h-5 sm:w-6 sm:h-6"/>
             </button>
           </div>
         ))}
@@ -124,7 +122,7 @@ const Cart = () => {
           className="group cursor-pointer flex items-center mt-8 gap-2 text-[#4fbf8b] font-medium"
         >
           <img
-            className="group-hover:-translate-x-1 transition"
+            className="group-hover:-translate-x-1 transition w-4 h-4 sm:w-5 sm:h-5"
             src={assets.arrow_right_icon_colored}
             alt="arrow"
           />
@@ -132,36 +130,37 @@ const Cart = () => {
         </button>
       </div>
 
-      <div className="max-w-[360px] w-full bg-gray-100/40 p-5 max-md:mt-16 border border-gray-300/70">
-        <h2 className="text-xl md:text-xl font-medium">Order Summary</h2>
+      {/* Order Summary */}
+      <div className="lg:w-[360px] w-full bg-gray-100/40 p-5 border border-gray-300/70 rounded-lg">
+        <h2 className="text-xl font-medium">Order Summary</h2>
         <hr className="border-gray-300 my-5" />
 
         <div className="mb-6">
           <p className="text-sm font-medium uppercase">Delivery Address</p>
-          <div className="relative flex justify-between items-start mt-2">
-            <p className="text-gray-500">
+          <div className="relative flex flex-col mt-2">
+            <p className="text-gray-500 mb-2">
               {selectAddress
                 ? `${selectAddress.street}, ${selectAddress.city}, ${selectAddress.state}, ${selectAddress.country}`
                 : "No address found"}
             </p>
             <button
               onClick={() => setShowAddress(!showAddress)}
-              className="text-[#4fbf8b] hover:underline cursor-pointer"
+              className="text-[#4fbf8b] hover:underline cursor-pointer mb-2"
             >
               Change
             </button>
             {showAddress && (
-              <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
+              <div className="absolute top-16 left-0 py-1 bg-white border border-gray-300 text-sm w-full z-50">
                 {addresses.map((address, index) => (
                   <p
+                    key={index}
                     onClick={() => {
                       setSelectAddress(address);
                       setShowAddress(false);
                     }}
-                    className="text-gray-500 p-2 hover:bg-gray-100"
+                    className="text-gray-500 p-2 hover:bg-gray-100 cursor-pointer"
                   >
-                    {address.street}, {address.city}, {address.state},{" "}
-                    {address.country}
+                    {address.street}, {address.city}, {address.state}, {address.country}
                   </p>
                 ))}
                 <p
@@ -174,8 +173,7 @@ const Cart = () => {
             )}
           </div>
 
-          <p className="text-sm font-medium uppercase mt-6">Payment Method</p>
-
+          <p className="text-sm font-medium uppercase mt-4">Payment Method</p>
           <select
             onChange={(e) => setPaymentOption(e.target.value)}
             className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none"
@@ -210,7 +208,7 @@ const Cart = () => {
             <span>Total Amount:</span>
             <span>
               {currency}
-              {getCartAmount() + (getCartAmount() * 2) / 100}{" "}
+              {getCartAmount() + (getCartAmount() * 2) / 100}
             </span>
           </p>
         </div>
@@ -219,11 +217,11 @@ const Cart = () => {
           onClick={placeOrder}
           className="w-full py-3 mt-6 cursor-pointer bg-[#4fbf8b] text-white font-medium hover:bg-[#4fbf8c] transition"
         >
-          {paymentOption === "COD" ? "place Order" : "Proceed to Checkout"}
+          {paymentOption === "COD" ? "Place Order" : "Proceed to Checkout"}
         </button>
       </div>
     </div>
-  ) : null;
+  );
 };
 
 export default Cart;

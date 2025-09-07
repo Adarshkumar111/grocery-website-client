@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
 
-//  input field component
-
-const InputField = ({ type, placeholder, handleChange, address }) => (
+const InputField = ({ type, placeholder, handleChange, address, name }) => (
   <input
     className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-[#4fbf8b] transition"
     type={type}
@@ -18,7 +16,7 @@ const InputField = ({ type, placeholder, handleChange, address }) => (
 const AddAddress = () => {
   const [address, setAddress] = useState({
     firstName: "",
-    lastname: "",
+    lastName: "",
     email: "",
     street: "",
     city: "",
@@ -30,7 +28,6 @@ const AddAddress = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setAddress((prevAddress) => ({
       ...prevAddress,
       [name]: value,
@@ -42,16 +39,15 @@ const AddAddress = () => {
   };
 
   return (
-    <div className="mt-16 pb-16">
+    <div className="mt-16 pb-16 px-4 md:px-10">
       <p className="text-2xl md:text-3xl text-gray-500">
-        Add Shipping{" "}
-        <span className="font-semibold text-[#4fbf8b]">Address</span>
+        Add Shipping <span className="font-semibold text-[#4fbf8b]">Address</span>
       </p>
 
-      <div className="flex flex-col-reverse md:flex-row justify-between mt-10">
-        <div className="flex-1 max-w-md">
+      <div className="flex flex-col md:flex-row justify-between mt-10 gap-10">
+        <div className="flex-1 max-w-md w-full">
           <form onSubmit={onSubmitHandler} className="space-y-3 mt-6 text-sm">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InputField
                 handleChange={handleChange}
                 address={address}
@@ -59,7 +55,6 @@ const AddAddress = () => {
                 type="text"
                 placeholder="First name"
               />
-
               <InputField
                 handleChange={handleChange}
                 address={address}
@@ -74,7 +69,7 @@ const AddAddress = () => {
               address={address}
               name="email"
               type="email"
-              placeholder="email address"
+              placeholder="Email address"
             />
 
             <InputField
@@ -85,7 +80,7 @@ const AddAddress = () => {
               placeholder="Street"
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InputField
                 handleChange={handleChange}
                 address={address}
@@ -98,11 +93,11 @@ const AddAddress = () => {
                 address={address}
                 name="state"
                 type="text"
-                placeholder="state"
+                placeholder="State"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InputField
                 handleChange={handleChange}
                 address={address}
@@ -113,7 +108,7 @@ const AddAddress = () => {
               <InputField
                 handleChange={handleChange}
                 address={address}
-                name="phone"
+                name="country"
                 type="text"
                 placeholder="Country"
               />
@@ -132,11 +127,14 @@ const AddAddress = () => {
             </button>
           </form>
         </div>
-        <img
-          className="md:mr-16 mb-16 md:mt-0"
-          src={assets.add_address_iamge}
-          alt=""
-        />
+
+        <div className="w-full md:w-1/3 flex justify-center md:justify-end">
+          <img
+            className="w-full max-w-xs md:max-w-full object-contain"
+            src={assets.add_address_iamge}
+            alt="Add Address"
+          />
+        </div>
       </div>
     </div>
   );
