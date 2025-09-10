@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const Login = () => {
-  const { setShowUserLogin, setUser } = useAppContext();
+  const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
 
   const [state, setState] = useState("login"); // "login" or "register"
   const [name, setName] = useState("");
@@ -10,15 +11,23 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const onSubmitHandler = async (event) => {
-    event.preventDefault();
-
-    // 🚀 Abhi test data set ho raha hai, baad me API call add kar sakte ho
-    setUser({
-      email: "test@gmail.com",
-      name: "greencart",
-    });
-
-    setShowUserLogin(false);
+    try {
+      event.preventDefault();
+      const { data } = await axios.post(`/api/v1/user/${state}`, {
+        name,
+        email,
+        password,
+      });
+      if (data.success) {
+        navigate("/");
+        setUser(data.user);
+        setShowUserLogin(false);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (

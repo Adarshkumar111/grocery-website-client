@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { assets, categories } from "../../assets/assets";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
   const [files, setFiles] = useState([]);
@@ -9,15 +11,46 @@ const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [offerPrice, setOfferPrice] = useState("");
 
+  const { axios } = useAppContext(); // parentheses lagao
+
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    try {
+      const productData = {
+        name,
+        description: description.split("\n"),
+        category,
+        price,
+        offerPrice,
+      };
+      const formData = new FormData();
+      formData.append("productData", JSON.stringify(productData));
+      for (let i = 0; i < files.length; i++) {
+        formData.append("images", files[i]);
+      }
+
+      const { data } = await axios.post("/api/v1/product/add", formData);
+      if (data.success) {
+        toast.success(data.message);
+        setName("");
+        setDescription("");
+        setCategory("");
+        setPrice("");
+        setOfferPrice("");
+        setFiles([]);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   return (
     <div className="no-scrollbar flex-1 h-[95vh] overflow-y-auto flex flex-col">
       <form
         onSubmit={onSubmitHandler}
-        className="md:p-10 p-4 space-y-6 max-w-full md:max-w-lg mx-auto"
+        className="p-4 md:p-10 space-y-6 w-full max-w-md md:max-w-2xl lg:max-w-3xl ml-0 md:ml-10 bg-white rounded-md shadow-sm"
       >
         {/* Images */}
         <div>
@@ -26,7 +59,11 @@ const AddProduct = () => {
             {Array(4)
               .fill("")
               .map((_, index) => (
-                <label key={index} htmlFor={`image${index}`} className="cursor-pointer">
+                <label
+                  key={index}
+                  htmlFor={`image${index}`}
+                  className="cursor-pointer"
+                >
                   <input
                     type="file"
                     id={`image${index}`}
@@ -39,7 +76,11 @@ const AddProduct = () => {
                   />
                   <img
                     className="w-24 h-24 md:w-28 md:h-28 object-cover rounded-md border border-gray-300"
-                    src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area}
+                    src={
+                      files[index]
+                        ? URL.createObjectURL(files[index])
+                        : assets.upload_area
+                    }
                     alt="uploadArea"
                   />
                 </label>
@@ -65,7 +106,10 @@ const AddProduct = () => {
 
         {/* Description */}
         <div className="flex flex-col gap-1">
-          <label className="text-base font-medium" htmlFor="product-description">
+          <label
+            className="text-base font-medium"
+            htmlFor="product-description"
+          >
             Product Description
           </label>
           <textarea
@@ -87,12 +131,14 @@ const AddProduct = () => {
             id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 w-full"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 w-full  text-black appearance-none pr-8"
           >
-            <option value="">Select Category</option>
+            <option value="" className="text-black">
+              Select Category
+            </option>
             {categories.map((item, index) => (
-              <option key={index} value={item.path}>
-                {item.name}
+              <option key={index} value={item.path} className="text-black">
+                {item.text}
               </option>
             ))}
           </select>
